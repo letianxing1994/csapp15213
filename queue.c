@@ -46,13 +46,15 @@ void q_free(queue_t *q)
     }
     //build a tmp ele for query each ele in queue
     struct ELE *tmp_ele = q->head;
+    struct ELE *cur;
     /* How about freeing the list elements and the strings? */
     while(tmp_ele != NULL) {
-        struct ELE *cur = tmp_ele;
+        cur = tmp_ele;
         tmp_ele = tmp_ele->next;
         free(cur->value);
         cur->value = NULL;
         free(cur);
+        cur = NULL;
     }
     /* Free queue structure */
     free(q);
@@ -86,7 +88,7 @@ bool q_insert_head(queue_t *q, char *s)
     if (newS == NULL) {
         return false;
     }
-    strncpy(newS, s, strlen(s));
+    strcpy(newS, s);
     if (strlen(newS) != strlen(s)) {
         return false;
     }
@@ -126,14 +128,15 @@ bool q_insert_tail(queue_t *q, char *s)
     if(newS == NULL) {
         return false;
     }
-    strncpy(newS, s, strlen(s));
+    strcpy(newS, s);
     if (strlen(newS) != strlen(s)) {
         return false;
     }
     newh->value = newS;
     newh->next = NULL;
     if(q->tail == NULL){
-        q->tail = newh;
+        q->head = newh;
+        q->tail = q->head;
     } else {
         q->tail->next = newh;
         q->tail = newh;
@@ -199,7 +202,7 @@ void q_reverse(queue_t *q)
     if (q == NULL || q->size == 0){
         return;
     }
-    list_ele_t *prev;
+    list_ele_t *prev = NULL;
     list_ele_t *curr = q->head;
     while (curr != NULL) {
         list_ele_t *nextTemp = curr->next;
