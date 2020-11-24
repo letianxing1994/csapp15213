@@ -46,13 +46,15 @@ void q_free(queue_t *q)
     }
     //build a tmp ele for query each ele in queue
     struct ELE *tmp_ele = q->head;
+    struct ELE *cur;
     /* How about freeing the list elements and the strings? */
     while(tmp_ele != NULL) {
-        struct ELE *cur = tmp_ele;
+        cur = tmp_ele;
         tmp_ele = tmp_ele->next;
         free(cur->value);
         cur->value = NULL;
         free(cur);
+        cur = NULL;
     }
     /* Free queue structure */
     free(q);
@@ -84,9 +86,10 @@ bool q_insert_head(queue_t *q, char *s)
     char *newS;
     newS = (char*)malloc(strlen(s)+1);
     if (newS == NULL) {
+        free(newh);
         return false;
     }
-    strncpy(newS, s, strlen(s));
+    strcpy(newS, s);
     if (strlen(newS) != strlen(s)) {
         return false;
     }
@@ -95,6 +98,10 @@ bool q_insert_head(queue_t *q, char *s)
     newh->next = q->head;
     q->head = newh;
     q->size = q->size + 1;
+    //first element inserted into that queue
+    if (q->size == 1) {
+        q->tail = q->head;
+    }
     return true;
 }
 
@@ -124,16 +131,18 @@ bool q_insert_tail(queue_t *q, char *s)
     char *newS;
     newS = (char*)malloc(strlen(s)+1);
     if(newS == NULL) {
+        free(newh);
         return false;
     }
-    strncpy(newS, s, strlen(s));
+    strcpy(newS, s);
     if (strlen(newS) != strlen(s)) {
         return false;
     }
     newh->value = newS;
     newh->next = NULL;
     if(q->tail == NULL){
-        q->tail = newh;
+        q->head = newh;
+        q->tail = q->head;
     } else {
         q->tail->next = newh;
         q->tail = newh;
@@ -161,7 +170,14 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     curhead = q->head;
     q->head = q->head->next;
     q->size = q->size - 1;
-    strncpy(sp, curhead->value, bufsize-1);
+    if(sp) {
+        char *tmp = curhead->value;
+        int idx = 0;
+        for (int i = 0; i < bufsize - 1 && tmp[i] != '\0'; i++, idx++) {
+            sp[i] = tmp[i];
+        }
+        sp[idx] = '\0';
+    }
     //释放空间后置为NULL
     free(curhead->value);
     free(curhead);
@@ -199,7 +215,7 @@ void q_reverse(queue_t *q)
     if (q == NULL || q->size == 0){
         return;
     }
-    list_ele_t *prev;
+    list_ele_t *prev = NULL;
     list_ele_t *curr = q->head;
     while (curr != NULL) {
         list_ele_t *nextTemp = curr->next;
