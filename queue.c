@@ -86,6 +86,7 @@ bool q_insert_head(queue_t *q, char *s)
     char *newS;
     newS = (char*)malloc(strlen(s)+1);
     if (newS == NULL) {
+        free(newh);
         return false;
     }
     strcpy(newS, s);
@@ -97,6 +98,10 @@ bool q_insert_head(queue_t *q, char *s)
     newh->next = q->head;
     q->head = newh;
     q->size = q->size + 1;
+    //first element inserted into that queue
+    if (q->size == 1) {
+        q->tail = q->head;
+    }
     return true;
 }
 
@@ -126,6 +131,7 @@ bool q_insert_tail(queue_t *q, char *s)
     char *newS;
     newS = (char*)malloc(strlen(s)+1);
     if(newS == NULL) {
+        free(newh);
         return false;
     }
     strcpy(newS, s);
@@ -164,7 +170,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     curhead = q->head;
     q->head = q->head->next;
     q->size = q->size - 1;
-    strncpy(sp, curhead->value, bufsize-1);
+    strncpy(sp, curhead->value, bufsize);
     //释放空间后置为NULL
     free(curhead->value);
     free(curhead);
