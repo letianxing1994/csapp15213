@@ -170,7 +170,14 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     curhead = q->head;
     q->head = q->head->next;
     q->size = q->size - 1;
-    strncpy(sp, curhead->value, bufsize);
+    if(sp) {
+        char *tmp = curhead->value;
+        int idx = 0;
+        for (int i = 0; i < bufsize - 1 && tmp[i] != '\0'; i++, idx++) {
+            sp[i] = tmp[i];
+        }
+        sp[idx] = '\0';
+    }
     //释放空间后置为NULL
     free(curhead->value);
     free(curhead);
