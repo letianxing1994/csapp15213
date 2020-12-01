@@ -46,3 +46,21 @@
 // off_t lseek(int fd, off_t pos, int origin), origin可以是SEEK_CUR,SEEK_END,SEEK_SET，若从SEEK_END尾部开始读，可能产生空洞（0表示）
 //  包含空洞稀疏文件会让内存的文件总大小大于磁盘的总大小，若返回-1，表示调用出错，会设置errno
 //  （EBADF, EINVAL, EOVERFLOW(超出off_t的范围，计算机操作系统通用寄存器位数大小), ESPIPE）
+
+//头文件<unistd.h>
+//ssize_t pread(int fd, void *buf, size_t count, off_t pos);
+//从fd的pos位置读count字节到buf中
+//ssize_t pwrite(int fd, const void *buf, size_t count, off_t pos);
+//从fd的pos位置开始，从buf写count字节到文件中
+//避免了多线程用lseek的竞争
+
+//文件截短
+//头文件:<unistd.h>
+//<sys/types.h>
+//int ftruncate(int fd, off_t len);
+//int truncate(const char *path, off_t len);
+//含义：将给定的文件描述符或者字符串表示的可读文件长度截短，成功返回0，失败返回-1，并设置errno，若截断后的len比原文件长度小，
+//则多余数据丢弃，并不可再读，若截短长度比原文件长度大，则补字符0
+
+
+//多路复用
