@@ -1,11 +1,3 @@
-//
-// Created by TianxingLe on 2020/11/25.
-//
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-
 //int open(const char *name, int flags, ...<mode_t mode>)
 //open系统调用，flags必备选项五个：O_RDONLY,O_WRONLY,O_RDWR,O_EXEC,O_SEARCH，第三个参数mode只有在第二个为O_CREATE是才定义，mode提供文件
 //本身的访问权限，用这种open方式打开的新建文件不会检查权限(IRWXU,IRUSR,IWUSR,IXUSR,IRWXG,IRGRP,IWGRP,IXGRP,IRWXO,IROTH,IWOTH,IXOTH)，可以执行与打开方式不同的操作
